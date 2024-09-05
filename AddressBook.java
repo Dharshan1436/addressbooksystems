@@ -2,6 +2,8 @@ package addressbooksystems;
 
 import java.util.Scanner;
 
+
+
 public class AddressBook {
     // Defining an array for contacts with a fixed size
     private Contacts[] contactsArray;
@@ -26,8 +28,9 @@ public class AddressBook {
             System.out.println("\nChoose an option:");
             System.out.println("1. Add a new contact");
             System.out.println("2. Edit a contact in the Address Book");
-            System.out.println("3. Display all contacts in the Address Book");
-            System.out.println("4. Exit");
+            System.out.println("3. Delete a contact from an Address Book");
+            System.out.println("4. Display all contacts in the Address Book");
+            System.out.println("5. Exit");
 
             int choice = sc.nextInt();
             sc.nextLine(); // consume the newline
@@ -46,11 +49,18 @@ public class AddressBook {
                     break;
 
                 case 3:
+                    // Delete a contact from the Address Book
+                    System.out.println("Enter the first or last name of the contact you want to delete:");
+                    String nameToDelete = sc.nextLine();
+                    deleteContact(nameToDelete, sc);
+                    break;
+
+                case 4:
                     // Display all contacts
                     displayAllContacts();
                     break;
 
-                case 4:
+                case 5:
                     // Exit the program
                     continueProgram = false;
                     System.out.println("Exiting the program.");
@@ -61,6 +71,7 @@ public class AddressBook {
             }
         }
     }
+
 
     // Method to add a new contact
     private void addNewContact(Scanner sc) {
@@ -178,6 +189,40 @@ public class AddressBook {
             for (int i = 0; i < contactCount; i++) {
                 System.out.println(contactsArray[i]);
             }
+            }
         }
+        public void deleteContact(String name, Scanner sc) {
+            boolean contactFound = false;
+
+            for (int i = 0; i < contactCount; i++) {
+                Contacts contact = contactsArray[i];
+
+                if (contact.getFirstName().equalsIgnoreCase(name) || contact.getLastName().equalsIgnoreCase(name)) {
+                    contactFound = true;
+                    System.out.println("Contact found: " + contact);
+                    System.out.println("Are you sure you want to delete this contact? (yes/no):");
+                    String confirmation = sc.nextLine();
+
+                    if (confirmation.equalsIgnoreCase("yes")) {
+                        // Shift all elements to the left after deletion
+                        for (int j = i; j < contactCount - 1; j++) {
+                            contactsArray[j] = contactsArray[j + 1];
+                        }
+
+                        contactsArray[contactCount - 1] = null; // Set the last element to null
+                        contactCount--; // Decrease the count of contacts
+                        System.out.println("Contact deleted successfully!");
+                    } else {
+                        System.out.println("Deletion canceled.");
+                    }
+                    return; // Exit after the first match
+                }
+            }
+
+            if (!contactFound) {
+                System.out.println("Contact not found.");
+            }
+        
+
     }
 }
