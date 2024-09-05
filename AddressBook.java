@@ -1,10 +1,12 @@
 package addressbooksystems;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
-
-
 public class AddressBook {
+    // HashMap to store multiple Address Books
+    private static HashMap<String, AddressBook> addressBookMap = new HashMap<>();
+
     // Defining an array for contacts with a fixed size
     private Contacts[] contactsArray;
     private int contactCount;
@@ -26,41 +28,75 @@ public class AddressBook {
 
         while (continueProgram) {
             System.out.println("\nChoose an option:");
-            System.out.println("1. Add a new contact");
-            System.out.println("2. Edit a contact in the Address Book");
-            System.out.println("3. Delete a contact from an Address Book");
-            System.out.println("4. Display all contacts in the Address Book");
-            System.out.println("5. Exit");
+            System.out.println("1. Add a new Address Book");
+            System.out.println("2. Add a new contact to an Address Book");
+            System.out.println("3. Edit a contact in the Address Book");
+            System.out.println("4. Delete a contact from an Address Book");
+            System.out.println("5. Display all contacts in an Address Book");
+            System.out.println("6. Exit");
 
             int choice = sc.nextInt();
             sc.nextLine(); // consume the newline
 
             switch (choice) {
                 case 1:
-                    // Add a new contact
-                    addNewContact(sc);
+                    // Add a new Address Book
+                    addNewAddressBook(sc);
                     break;
 
                 case 2:
-                    // Edit an existing contact
-                    System.out.println("Enter the first or last name of the contact you want to edit:");
-                    String nameToEdit = sc.nextLine();
-                    editContact(nameToEdit, sc);
+                    // Add a new contact to an Address Book
+                    System.out.println("Enter the name of the Address Book:");
+                    String bookName = sc.nextLine();
+                    AddressBook book = addressBookMap.get(bookName);
+                    if (book != null) {
+                        book.addNewContact(sc);
+                    } else {
+                        System.out.println("Address Book not found.");
+                    }
                     break;
 
                 case 3:
-                    // Delete a contact from the Address Book
-                    System.out.println("Enter the first or last name of the contact you want to delete:");
-                    String nameToDelete = sc.nextLine();
-                    deleteContact(nameToDelete, sc);
+                    // Edit an existing contact
+                    System.out.println("Enter the name of the Address Book:");
+                    String bookNameToEdit = sc.nextLine();
+                    AddressBook bookToEdit = addressBookMap.get(bookNameToEdit);
+                    if (bookToEdit != null) {
+                        System.out.println("Enter the first or last name of the contact you want to edit:");
+                        String nameToEdit = sc.nextLine();
+                        bookToEdit.editContact(nameToEdit, sc);
+                    } else {
+                        System.out.println("Address Book not found.");
+                    }
                     break;
 
                 case 4:
-                    // Display all contacts
-                    displayAllContacts();
+                    // Delete a contact from the Address Book
+                    System.out.println("Enter the name of the Address Book:");
+                    String bookNameToDelete = sc.nextLine();
+                    AddressBook bookToDelete = addressBookMap.get(bookNameToDelete);
+                    if (bookToDelete != null) {
+                        System.out.println("Enter the first or last name of the contact you want to delete:");
+                        String nameToDelete = sc.nextLine();
+                        bookToDelete.deleteContact(nameToDelete, sc);
+                    } else {
+                        System.out.println("Address Book not found.");
+                    }
                     break;
 
                 case 5:
+                    // Display all contacts in an Address Book
+                    System.out.println("Enter the name of the Address Book:");
+                    String bookNameToDisplay = sc.nextLine();
+                    AddressBook bookToDisplay = addressBookMap.get(bookNameToDisplay);
+                    if (bookToDisplay != null) {
+                        bookToDisplay.displayAllContacts();
+                    } else {
+                        System.out.println("Address Book not found.");
+                    }
+                    break;
+
+                case 6:
                     // Exit the program
                     continueProgram = false;
                     System.out.println("Exiting the program.");
@@ -72,6 +108,19 @@ public class AddressBook {
         }
     }
 
+    // Method to add a new Address Book
+    private static void addNewAddressBook(Scanner sc) {
+        System.out.println("Enter a unique name for the new Address Book:");
+        String bookName = sc.nextLine();
+
+        if (addressBookMap.containsKey(bookName)) {
+            System.out.println("An Address Book with this name already exists.");
+        } else {
+            AddressBook newAddressBook = new AddressBook();
+            addressBookMap.put(bookName, newAddressBook);
+            System.out.println("New Address Book '" + bookName + "' added successfully.");
+        }
+    }
 
     // Method to add a new contact
     private void addNewContact(Scanner sc) {
@@ -189,40 +238,40 @@ public class AddressBook {
             for (int i = 0; i < contactCount; i++) {
                 System.out.println(contactsArray[i]);
             }
+        }
+    }
+
+    // Method to delete a contact
+    public void deleteContact(String name, Scanner sc) {
+        boolean contactFound = false;
+
+        for (int i = 0; i < contactCount; i++) {
+            Contacts contact = contactsArray[i];
+
+            if (contact.getFirstName().equalsIgnoreCase(name) || contact.getLastName().equalsIgnoreCase(name)) {
+                contactFound = true;
+                System.out.println("Contact found: " + contact);
+                System.out.println("Are you sure you want to delete this contact? (yes/no):");
+                String confirmation = sc.nextLine();
+
+                if (confirmation.equalsIgnoreCase("yes")) {
+                    // Shift all elements to the left after deletion
+                    for (int j = i; j < contactCount - 1; j++) {
+                        contactsArray[j] = contactsArray[j + 1];
+                    }
+
+                    contactsArray[contactCount - 1] = null; // Set the last element to null
+                    contactCount--; // Decrease the count of contacts
+                    System.out.println("Contact deleted successfully!");
+                } else {
+                    System.out.println("Deletion canceled.");
+                }
+                return; // Exit after the first match
             }
         }
-        public void deleteContact(String name, Scanner sc) {
-            boolean contactFound = false;
 
-            for (int i = 0; i < contactCount; i++) {
-                Contacts contact = contactsArray[i];
-
-                if (contact.getFirstName().equalsIgnoreCase(name) || contact.getLastName().equalsIgnoreCase(name)) {
-                    contactFound = true;
-                    System.out.println("Contact found: " + contact);
-                    System.out.println("Are you sure you want to delete this contact? (yes/no):");
-                    String confirmation = sc.nextLine();
-
-                    if (confirmation.equalsIgnoreCase("yes")) {
-                        // Shift all elements to the left after deletion
-                        for (int j = i; j < contactCount - 1; j++) {
-                            contactsArray[j] = contactsArray[j + 1];
-                        }
-
-                        contactsArray[contactCount - 1] = null; // Set the last element to null
-                        contactCount--; // Decrease the count of contacts
-                        System.out.println("Contact deleted successfully!");
-                    } else {
-                        System.out.println("Deletion canceled.");
-                    }
-                    return; // Exit after the first match
-                }
-            }
-
-            if (!contactFound) {
-                System.out.println("Contact not found.");
-            }
-        
-
+        if (!contactFound) {
+            System.out.println("Contact not found.");
+        }
     }
 }
