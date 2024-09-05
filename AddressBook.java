@@ -25,8 +25,9 @@ public class AddressBook {
         while (continueProgram) {
             System.out.println("\nChoose an option:");
             System.out.println("1. Add a new contact");
-            System.out.println("2. Display all contacts in the Address Book");
-            System.out.println("3. Exit");
+            System.out.println("2. Edit a contact in the Address Book");
+            System.out.println("3. Display all contacts in the Address Book");
+            System.out.println("4. Exit");
 
             int choice = sc.nextInt();
             sc.nextLine(); // consume the newline
@@ -38,11 +39,18 @@ public class AddressBook {
                     break;
 
                 case 2:
+                    // Edit an existing contact
+                    System.out.println("Enter the first or last name of the contact you want to edit:");
+                    String nameToEdit = sc.nextLine();
+                    editContact(nameToEdit, sc);
+                    break;
+
+                case 3:
                     // Display all contacts
                     displayAllContacts();
                     break;
 
-                case 3:
+                case 4:
                     // Exit the program
                     continueProgram = false;
                     System.out.println("Exiting the program.");
@@ -90,6 +98,74 @@ public class AddressBook {
             System.out.println("Contact added successfully.");
         } else {
             System.out.println("Address Book is full. Cannot add more contacts.");
+        }
+    }
+
+    // Method to edit an existing contact
+    private void editContact(String nameToEdit, Scanner sc) {
+        boolean contactFound = false;
+
+        for (int i = 0; i < contactCount; i++) {
+            Contacts contact = contactsArray[i];
+            if (contact.getFirstName().equalsIgnoreCase(nameToEdit) || contact.getLastName().equalsIgnoreCase(nameToEdit)) {
+                System.out.println("Editing contact: " + contact);
+
+                System.out.println("Enter new first name (or press Enter to keep the same):");
+                String newFirstName = sc.nextLine();
+                if (!newFirstName.isEmpty()) {
+                    contact.setFirstName(newFirstName);
+                }
+
+                System.out.println("Enter new last name (or press Enter to keep the same):");
+                String newLastName = sc.nextLine();
+                if (!newLastName.isEmpty()) {
+                    contact.setLastName(newLastName);
+                }
+
+                System.out.println("Enter new address (or press Enter to keep the same):");
+                String newAddress = sc.nextLine();
+                if (!newAddress.isEmpty()) {
+                    contact.setAddress(newAddress);
+                }
+
+                System.out.println("Enter new city (or press Enter to keep the same):");
+                String newCity = sc.nextLine();
+                if (!newCity.isEmpty()) {
+                    contact.setCity(newCity);
+                }
+
+                System.out.println("Enter new state (or press Enter to keep the same):");
+                String newState = sc.nextLine();
+                if (!newState.isEmpty()) {
+                    contact.setState(newState);
+                }
+
+                System.out.println("Enter new pincode (or press Enter to keep the same):");
+                String newZip = sc.nextLine();
+                if (!newZip.isEmpty()) {
+                    contact.setZip(Integer.parseInt(newZip));
+                }
+
+                System.out.println("Enter new mobile number (or press Enter to keep the same):");
+                String newPhoneNumber = sc.nextLine();
+                if (!newPhoneNumber.isEmpty()) {
+                    contact.setPhoneNumber(Long.parseLong(newPhoneNumber));
+                }
+
+                System.out.println("Enter new email (or press Enter to keep the same):");
+                String newEmail = sc.nextLine();
+                if (!newEmail.isEmpty()) {
+                    contact.setEmail(newEmail);
+                }
+
+                System.out.println("Contact updated successfully.");
+                contactFound = true;
+                break;
+            }
+        }
+
+        if (!contactFound) {
+            System.out.println("Contact not found.");
         }
     }
 
